@@ -1,0 +1,89 @@
+// Вариант 3
+
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Scanner;
+
+public class Zadanie5 {
+    public static void main(String[] args) {
+        try {
+            File folder = new File("C:\\FIO");
+            if (!folder.exists())
+                folder.mkdir();
+
+            File f1 = new File("C:\\FIO\\rec_RAF.txt");
+            f1.createNewFile();
+
+            RandomAccessFile rf = new RandomAccessFile(f1,"rw"); 
+            long fSize = rf.length(); 
+            Scanner sc = new Scanner(System.in, "cp1251");
+            System.out.print("Введите количество сотрудников для записи в файл\n" + "=> ");
+            int kol = sc.nextInt();
+            sc.nextLine(); 
+
+            String fam, imya, otchesctvo, ves;
+            int vozrast;
+
+            for (int i = 0; i < kol; i++) {
+                System.out.print("Введите фамилию " + (i + 1) + " сотрудника => ");
+                fam = sc.next();
+                rf.seek(rf.length()); 
+                rf.writeUTF(fam); 
+                for (int j = 0; j < 20 - fam.length(); j++)
+                    rf.writeByte(1); 
+
+                System.out.print("Введите его имя => ");
+                imya = sc.next();
+                rf.writeUTF(imya); 
+                for (int j = 0; j < 20 - imya.length(); j++)
+                    rf.writeByte(1);
+
+                System.out.print("Введите его отчество => ");
+                otchesctvo = sc.next();
+                rf.writeUTF(otchesctvo); 
+                for (int j = 0; j < 20 - otchesctvo.length(); j++)
+                    rf.writeByte(1);
+
+                System.out.print("Введите его вес => ");
+                ves = sc.next();
+                rf.writeUTF(ves);
+                for (int j = 0; j < 20 - ves.length(); j++)
+                    rf.writeByte(1);
+
+                System.out.print("Введите его возраст => ");
+                vozrast = sc.nextInt();
+                sc.nextLine();
+                rf.writeInt(vozrast); 
+            }
+            rf.close();
+
+            rf = new RandomAccessFile(f1, "r");
+            rf.seek(0); // перемещение в начало файла
+            System.out.println("Информация о сотрудниках");
+            System.out.println("Фамилия \t\t Имя \t\t Отчество \t\t Вес \t\t Возраст");
+
+            for (int i = 0; i < kol; i++) {
+                fam = rf.readUTF();
+                for (int j = 0; j < 20 - fam.length(); j++)
+                    rf.readByte();
+
+                imya = rf.readUTF();
+                for (int j = 0; j < 20 - imya.length(); j++)
+                    rf.readByte();
+
+                otchesctvo = rf.readUTF();
+                for (int j = 0; j < 20 - otchesctvo.length(); j++)
+                    rf.readByte();
+
+                ves = rf.readUTF();
+                for (int j = 0; j < 20 - ves.length(); j++)
+                    rf.readByte();
+
+                vozrast = rf.readInt();
+                System.out.println(fam + "\t\t\t" + imya + "\t\t\t" + otchesctvo + "\t\t\t"+ ves + "\t\t\t" + vozrast);
+            }
+            rf.close();
+        } catch (IOException e) {
+            System.out.println("End of file " + e);
+        } }}
